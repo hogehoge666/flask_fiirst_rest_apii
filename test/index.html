@@ -2,16 +2,113 @@
 <html>
 
 <head>
-  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-  <title>ToDo List</title>
+    <title>ToDo List</title>
+    <link rel="stylesheet" href="main.css">
 </head>
 
 <body>
-  <div id="app">
-    <show-todo-items></show-todo-items>
-    <register-todo-item></register-todo-item>
-  </div>
-  <script src="index.js"></script>
-</body>
 
-</html>
+    <div id="app">
+        <div class="header">
+            <h1>{{ header }}</h1>
+        </div>
+        <div class="add-item-form">
+            <input v-model="todotitle" v-on:keyup.enter="register_todoitem()" type="text" placeholder="Write a todo item">
+            <button v-on:click="register_todoitem()" v-bind:disabled="todotitle.length === 0" class="btn btn-primary">Add to list</button>
+        </div>
+        <div v-if="selected_id.length > 0">
+            <button v-on:click="delete_todoitems()" class="btn btn-secondary">Delete</button>
+            <button v-on:click="set_done_for_items()" class="btn btn-secondary">Done</button>
+            <button v-on:click="set_undone_for_items()" class="btn btn-secondary">Clear</button>
+        </div>
+        <ul>
+            <li v-for="item in items" v-bind:class="{strikeout: item.done}"><input v-model="selected_id" type="checkbox" v-bind:id="item.item_id" v-bind:value="item.item_id"> {{ item.title }}</li>
+        </ul>
+    </div>
+
+    <script src="https://unpkg.com/vue"></script>
+    <script>
+        const request_url = "http://localhost:5000/api/todoitems";
+        new Vue({
+            el: '#app',
+            data: {
+                header: 'ToDo List',
+                items: null,
+                todotitle: '',
+                selected_id: [],
+            },
+            methods: {
+                showtodos: function() {
+                    fetch(request_url)
+                        .then(response => response.json())
+                        .then(jsondata => this.items = jsondata.objects);
+                },
+                register_todoitem: function() {
+                    console.log(this.todotitle);
+                    fetch(request_url, {
+                            method: "POST",
+                            mode: "cors",
+                            body: JSON.stringify({
+                                title: this.todotitle
+                            }),
+                            headers: {
+                                "content-type": "application/json"
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(jsondata => {
+                            console.log(jsondata);
+                            this.showtodos();
+                            this.todotitle = '';
+                        })
+                        .catch(err => console.log(`err: ${err}`));
+                },
+                delete_todoitems: function() {
+                    promises = [];
+                    this.selected_id.forEach(id => promises.push(this.delete_todoitem(id)));
+                    Promise.all(promises).then(response => {
+                        this.showtodos();
+                        this.selected_id = [];
+                    });
+                },
+                delete_todoitem: function(id) {
+                    return fetch(request_url + '/' + id, {
+                            method: "DELETE",
+                        });
+                },
+                set_done_for_items: function() {
+                    promises = [];
+                    this.selected_id.forEach(id => promises.push(this.change_done(id, true)));
+                    Promise.all(promises).then(response => {
+                        this.showtodos();
+                        this.selected_id = [];
+                    });
+                },
+                set_undone_for_items: function() {
+                    promises = [];
+                    this.selected_id.forEach(id => promises.push(this.change_done(id, false)));
+                    Promise.all(promises).then(response => {
+                        this.showtodos();
+                        this.selected_id = [];
+                    });
+                },
+                change_done: function(id, status) {
+                    return fetch(request_url + '/' + id, {
+                        method: "PUT",
+                        mode: "cors",
+                        body: JSON.stringify({
+                            done: status,
+                        }),
+                        headers: {
+                            "content-type": "application/json"
+                        },
+                    });
+                },
+            },
+            mounted: function() {
+                this.showtodos();
+            },
+        });
+    </script>
+
+</body></html>
