@@ -9,6 +9,7 @@ Flaskで作成する簡単なAPIサーバの写経です。
 - RestlessとSqlAlchemyによる簡易APIサーバ
 - CORによるCross Origin Resource Sharing許容
 - Vue.jsによる簡易なフロントエンド
+  - 簡易的にtestフォルダへ配置
 
 ---
 
@@ -35,6 +36,19 @@ Flaskで作成する簡単なAPIサーバの写経です。
 
 ---
 
+## 5. v0.5
+
+- waitressの前にnginxを追加
+  - 静的ファイルの配信
+  - API要求をwaitressへReverse Proxy
+- nginxをコンテナ化
+- docker-compose対応
+  - flask/waitressコンテナとnginxコンテナを管理
+  - nginxのTCP 8080番のみ外部公開
+  - waitressのTCP 5000番は外部に公開していない
+
+---
+
 ## その他
 
 ### curlによるAPIの呼び出し
@@ -50,12 +64,12 @@ curl -H "Content-type: application/json" -X GET http://localhost:5000/api/todoit
 
 ### Vue.jsのフロントエンド
 
-簡易的にtestディレクトリに配置
+- nginxから配信
 
 ```
-test/
+/usr/share/nginx/html
 ├── index.html
-└── index.js
+└── main.js
 ```
 
 ---
@@ -80,7 +94,7 @@ SQLALCHEMY_TRACK_MODIFICATIONS = True
 
 ---
 
-### DB初期化
+### sqlite3 DB初期化手順
 
 ```
 export FLASK_APP=todoapi
@@ -139,3 +153,38 @@ docker run -it --rm -p 5000:5000 todoapi:latest
 ```
 docker exec -it <container id> /bin/sh; exit
 ```
+
+---
+
+### docker imageの作成（docker-compose）
+
+```
+docker-compose build
+```
+
+---
+
+### コンテナ実行（docker-compose）
+
+```
+docker-compose up -d
+```
+
+---
+
+### コンテナ終了（docker-compose）
+
+```
+docker-compose down
+```
+
+### コンテナ接続（docker-compose）
+
+```
+docker-compose exec <サービス名> <シェル>
+例：docker-compose exec todoapi-proxy /bin/bash
+```
+
+「-it」してなくても接続できる
+
+---

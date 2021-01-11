@@ -28,7 +28,7 @@
 
     <script src="https://unpkg.com/vue"></script>
     <script>
-        const request_url = "http://localhost:5000/api/todoitems";
+        const request_url = "http://localhost:8080/api/todoitems";
         new Vue({
             el: '#app',
             data: {
@@ -73,8 +73,8 @@
                 },
                 delete_todoitem: function(id) {
                     return fetch(request_url + '/' + id, {
-                            method: "DELETE",
-                        });
+                        method: "DELETE",
+                    });
                 },
                 set_done_for_items: function() {
                     promises = [];

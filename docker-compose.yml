@@ -1,0 +1,13 @@
+version: "3"
+services:
+  todoapi-app:
+    image: todoapi-app
+    build: ./app
+    environment:
+      - TODOAPI_ENV=docker
+      - TODOAPI_REMOTE_DEBUG=on
+  todoapi-proxy:
+    image: todoapi-proxy
+    build: ./proxy
+    ports:
+      - "8080:80"
