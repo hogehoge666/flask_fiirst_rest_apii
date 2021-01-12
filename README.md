@@ -49,6 +49,18 @@ Flaskで作成する簡単なAPIサーバの写経です。
 
 ---
 
+## 6. v0.6
+
+- MySQL対応
+  - python main.pyしたときはsqlite3を使う
+  - dockerから実行したときはMySQLを使う
+- named volumeでMySQLデータを永続化
+- MySQL、App、Proxyの順で起動するようにdocker-compose.ymlを修正
+  - bashが必要だったのでAppのベースをalpineからslim-busterへ変更
+- db.create_all()をmain.pyで実施
+
+---
+
 ## その他
 
 ### curlによるAPIの呼び出し

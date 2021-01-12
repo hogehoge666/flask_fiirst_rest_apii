@@ -11,6 +11,8 @@ flask-sqlalchemy = "*"
 flask-restless = "*"
 flask-cors = "*"
 waitress = "*"
+pymysql = "*"
+cryptography = "*"
 
 [requires]
 python_version = "3.8"

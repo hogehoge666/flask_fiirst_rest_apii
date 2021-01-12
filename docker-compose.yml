@@ -1,13 +1,31 @@
 version: "3"
 services:
   todoapi-app:
+    container_name: todoapi-app
     image: todoapi-app
     build: ./app
     environment:
       - TODOAPI_ENV=docker
       - TODOAPI_REMOTE_DEBUG=on
+    working_dir: /app
+    command: ["./wait-for-it.sh", "todoapi-db:3306", "--", "python3", "main.py"]
   todoapi-proxy:
+    container_name: todoapi-proxy
     image: todoapi-proxy
     build: ./proxy
     ports:
       - "8080:80"
+    depends_on:
+      - todoapi-app
+  todoapi-db:
+    container_name: todoapi-db
+    image: mysql:latest
+    environment:
+      - MYSQL_ROOT_PASSWORD=mysecret
+      - MYSQL_DATABASE=todoitems
+    volumes:
+      - mydb-volume:/var/lib/mysql
+volumes:
+  mydb-volume:
+    name: mydb-volume
+    driver: local
