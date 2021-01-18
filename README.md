@@ -61,6 +61,13 @@ Flaskで作成する簡単なAPIサーバの写経です。
 
 ---
 
+## 7. v0.7
+- waitressがアクセスログをコンソールへ出力
+  - PasteのTranslogggerを使用
+  - docker bridgeがNATするのでクライアントIPは残念ながらwaitressには見えない
+
+---
+
 ## その他
 
 ### curlによるAPIの呼び出し
@@ -200,3 +207,19 @@ docker-compose exec <サービス名> <シェル>
 「-it」してなくても接続できる
 
 ---
+
+### 諦めたこと
+
+#####  SSL/TLS対応
+- SSL/TLS対応を行ったが証明書の管理が煩雑なのでcommitしなかった
+
+##### waitressでクライアントの実IPをログ出力
+- docker bridgeが要求をNATする。
+- NATするときdockerはX-real−ipやX-forwarded-forにクライアントの実IPは入れない。
+- このようにクライントの実IP情報がDocker Networkの入り口で失われてしまう。
+- 「ubuntuを使うとクライント実IPを取得できる」というコメントもあった。
+- 対策
+  - docker bridgeの外にLoadbalancerを配置してX-forwarded-forに追加させる
+  - host network（NATなし）を使う
+  - ubuntuを使う
+- host networkが推奨されているようだがhost networkは使いたくないのでやめた
