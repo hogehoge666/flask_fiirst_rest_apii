@@ -9,6 +9,7 @@ itsdangerous==1.1.0
 Jinja2==2.11.2
 MarkupSafe==1.1.1
 mimerender==0.6.0
+Paste==3.5.0
 pycparser==2.20
 PyMySQL==1.0.2
 python-dateutil==2.8.1

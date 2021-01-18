@@ -13,6 +13,7 @@ flask-cors = "*"
 waitress = "*"
 pymysql = "*"
 cryptography = "*"
+paste = "*"
 
 [requires]
 python_version = "3.8"
