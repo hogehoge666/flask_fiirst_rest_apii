@@ -208,18 +208,18 @@ docker-compose exec <サービス名> <シェル>
 
 ---
 
-### 諦めたこと
+### commitしなかったこと
 
 #####  SSL/TLS対応
-- SSL/TLS対応を行ったが証明書の管理が煩雑なのでcommitしなかった
+- SSL/TLS対応を行った
+- しかし証明書の管理が面倒なのでcommitしない
 
 ##### waitressでクライアントの実IPをログ出力
-- docker bridgeが要求をNATする。
-- NATするときdockerはX-real−ipやX-forwarded-forにクライアントの実IPは入れない。
-- このようにクライントの実IP情報がDocker Networkの入り口で失われてしまう。
-- 「ubuntuを使うとクライント実IPを取得できる」というコメントもあった。
-- 対策
-  - docker bridgeの外にLoadbalancerを配置してX-forwarded-forに追加させる
-  - host network（NATなし）を使う
-  - ubuntuを使う
-- host networkが推奨されているようだがhost networkは使いたくないのでやめた
+- nginxで「$proxy_add_x_forwarded_for」を使ってもwaitressのログにクライアントアドレスを出力できなかった
+  - docker bridgeが要求をNATする。
+  - NATするときdockerはX-real−ipやX-forwarded-forにクライアントのアドレスを入れない。
+- MacからCentosに変更したらクライアントのアドレスをwaitressのログに出力できた
+- 代替案としてMacでhost networkを試したが今度はhost networkがうまく動かなかった
+- Centosに変えたらhost networkが正常に動いた
+- メイン作業環境であるMacで動かなかったので「$proxy_add_x_forwarded_for」を使ったコードはcommitしない
+
