@@ -3,6 +3,10 @@
 
 <head>
     <title>ToDo List</title>
+
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
     <link rel="stylesheet" href="main.css">
 </head>
 
@@ -13,48 +17,67 @@
             <h1>{{ header }}</h1>
         </div>
         <div class="add-item-form">
-            <input v-model="todotitle" v-on:keyup.enter="register_todoitem()" type="text" placeholder="Write a todo item">
-            <button v-on:click="register_todoitem()" v-bind:disabled="todotitle.length === 0" class="btn btn-primary">Add to list</button>
+            <input v-model="todotitle" v-on:keyup.enter="register_todoitem()" type="text"
+                placeholder="Write a todo item">
+            <button v-on:click="register_todoitem()" v-bind:disabled="todotitle.length === 0"
+                class="btn btn-primary">追加</button>
         </div>
-        <div v-if="selected_id.length > 0">
-            <button v-on:click="delete_todoitems()" class="btn btn-secondary">Delete</button>
-            <button v-on:click="set_done_for_items()" class="btn btn-secondary">Done</button>
-            <button v-on:click="set_undone_for_items()" class="btn btn-secondary">Clear</button>
+
+        <div v-for="item in items">
+            <div class="card mt-2">
+                <h5 class="card-header" v-bind:class="{strikeout: item.done}"> {{ item.title }} </h5>
+                <div class="card-body">
+                    <p class="card-text" v-bind:class="{strikeout: item.done}">詳細</p>
+                    <button v-on:click="change_done(item.item_id, true)" v-if="item.done == false" class="btn btn-primary" v-bind:value="item.item_id">完了</button>
+                    <button v-on:click="change_done(item.item_id, false)" v-if="item.done == true" class="btn btn-secondary" v-bind:value="item.item_id">戻す</button>
+                    <button v-on:click="delete_todoitem(item.item_id)" class="btn btn-danger" v-bind:value="item.item_id">削除</button>
+                </div>
+            </div>
         </div>
-        <ul>
-            <li v-for="item in items" v-bind:class="{strikeout: item.done}"><input v-model="selected_id" type="checkbox" v-bind:id="item.item_id" v-bind:value="item.item_id"> {{ item.title }}</li>
-        </ul>
     </div>
 
+    <!-- JavaScript Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
+        crossorigin="anonymous"></script>
     <script src="https://unpkg.com/vue"></script>
     <script>
-        const request_url = "http://localhost:8080/api/todoitems";
+        const request_url = "http://localhost:5000/api/todoitems";
         new Vue({
             el: '#app',
             data: {
                 header: 'ToDo List',
-                items: null,
+                items: [
+                    {
+                        id: 1,
+                        title: 'hogehoge',
+                        done: false
+                    },
+                    {
+                        id: 2,
+                        title: 'foofoo',
+                        done: true
+                    }
+                ],
                 todotitle: '',
-                selected_id: [],
             },
             methods: {
-                showtodos: function() {
+                showtodos: function () {
                     fetch(request_url)
                         .then(response => response.json())
                         .then(jsondata => this.items = jsondata.objects);
                 },
-                register_todoitem: function() {
-                    console.log(this.todotitle);
+                register_todoitem: function () {
                     fetch(request_url, {
-                            method: "POST",
-                            mode: "cors",
-                            body: JSON.stringify({
-                                title: this.todotitle
-                            }),
-                            headers: {
-                                "content-type": "application/json"
-                            }
-                        })
+                        method: "POST",
+                        mode: "cors",
+                        body: JSON.stringify({
+                            title: this.todotitle
+                        }),
+                        headers: {
+                            "content-type": "application/json"
+                        }
+                    })
                         .then(response => response.json())
                         .then(jsondata => {
                             console.log(jsondata);
@@ -63,37 +86,14 @@
                         })
                         .catch(err => console.log(`err: ${err}`));
                 },
-                delete_todoitems: function() {
-                    promises = [];
-                    this.selected_id.forEach(id => promises.push(this.delete_todoitem(id)));
-                    Promise.all(promises).then(response => {
-                        this.showtodos();
-                        this.selected_id = [];
-                    });
-                },
-                delete_todoitem: function(id) {
-                    return fetch(request_url + '/' + id, {
+                delete_todoitem: function (id) {
+                    fetch(request_url + '/' + id, {
                         method: "DELETE",
-                    });
+                    })
+                    .then(response => this.showtodos());
                 },
-                set_done_for_items: function() {
-                    promises = [];
-                    this.selected_id.forEach(id => promises.push(this.change_done(id, true)));
-                    Promise.all(promises).then(response => {
-                        this.showtodos();
-                        this.selected_id = [];
-                    });
-                },
-                set_undone_for_items: function() {
-                    promises = [];
-                    this.selected_id.forEach(id => promises.push(this.change_done(id, false)));
-                    Promise.all(promises).then(response => {
-                        this.showtodos();
-                        this.selected_id = [];
-                    });
-                },
-                change_done: function(id, status) {
-                    return fetch(request_url + '/' + id, {
+                change_done: function (id, status) {
+                    fetch(request_url + '/' + id, {
                         method: "PUT",
                         mode: "cors",
                         body: JSON.stringify({
@@ -102,13 +102,16 @@
                         headers: {
                             "content-type": "application/json"
                         },
-                    });
+                    })
+                    .then(response => this.showtodos());
                 },
             },
-            mounted: function() {
+            mounted: function () {
                 this.showtodos();
             },
         });
     </script>
 
-</body></html>
+</body>
+
+</html>

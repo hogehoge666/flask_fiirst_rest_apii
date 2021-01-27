@@ -66,6 +66,10 @@ Flaskで作成する簡単なAPIサーバの写経です。
   - PasteのTranslogggerを使用
   - docker bridgeがNATするのでクライアントIPは残念ながらwaitressには見えない
 
+## 8. v0.8
+- Bootstrapを使ったCard
+- 複数項目の一括操作廃止
+
 ---
 
 ## その他
