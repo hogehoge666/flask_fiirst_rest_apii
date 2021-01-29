@@ -1,54 +1,103 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
 
 <head>
-    <title>ToDo List</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- CSS only -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
-    <link rel="stylesheet" href="main.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <style>
+        .strikeout {
+            text-decoration: line-through;
+            color: #B8C2CC;
+        }
+
+        .strikeout:hover {
+            color: #8795A1;
+        }
+
+        .priority {
+            color: #DE751F;
+        }
+    </style>
+
+    <title>ToDo List</title>
 </head>
 
-<body>
+<body class="bg-light">
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-dark">
+            <div class="container-fluid">
+                <a class="navbar-brand text-white" href="#">Todo List</a>
+                <button class="navbar-toggler bg-white" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link active text-white" aria-current="page" href="#">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="#">Settings</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="#" tabindex="-1" aria-disabled="true">Help</a>
+                        </li>
+                    </ul>
+                    <form class="d-flex">
+                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                        <button class="btn btn-primary text-white" type="submit">Search</button>
+                    </form>
+                </div>
+            </div>
+        </nav>
+    </header>
 
     <div id="app">
-        <div class="header">
-            <h1>{{ header }}</h1>
-        </div>
-        <div class="add-item-form">
-            <input v-model="todotitle" v-on:keyup.enter="register_todoitem()" type="text"
-                placeholder="Write a todo item">
-            <button v-on:click="register_todoitem()" v-bind:disabled="todotitle.length === 0"
-                class="btn btn-primary">追加</button>
+        <!-- Input Form -->
+        <div class="container mt-5 p-3 bg-white">
+            <div class="row justify-content-md-center">
+                <div class="col-md-8 add-item-form">
+                    <input class="col-10" v-model="todotitle" type="text" placeholder="タスクを追加して下さい">
+                    <button v-on:click="register_todoitem()" v-bind:disabled="todotitle.length === 0" class="btn btn-primary">追加</button>
+                </div>
+            </div>
         </div>
 
-        <div v-for="item in items">
-            <div class="card mt-2">
-                <h5 class="card-header" v-bind:class="{strikeout: item.done}"> {{ item.title }} </h5>
-                <div class="card-body">
-                    <p class="card-text" v-bind:class="{strikeout: item.done}">詳細</p>
-                    <button v-on:click="change_done(item.item_id, true)" v-if="item.done == false" class="btn btn-primary" v-bind:value="item.item_id">完了</button>
-                    <button v-on:click="change_done(item.item_id, false)" v-if="item.done == true" class="btn btn-secondary" v-bind:value="item.item_id">戻す</button>
-                    <button v-on:click="delete_todoitem(item.item_id)" class="btn btn-danger" v-bind:value="item.item_id">削除</button>
+        <!-- Cards -->
+        <div class="container my-3 p-3 bg-white">
+            <h6 v-if="items.length == 0">
+                タスクは0件です
+            </h6>
+            <div v-for="item in items">
+                <div class="card col-md-8 mt-2 mx-auto">
+                    <h5 class="card-header" v-bind:class="{strikeout: item.done}"> {{ item.title }} </h5>
+                    <div class="card-body">
+                        <p class="card-text" v-bind:class="{strikeout: item.done}">詳細</p>
+                        <button v-on:click="change_done(item.item_id, true)" v-if="item.done == false" class="btn btn-primary" v-bind:value="item.item_id">完了</button>
+                        <button v-on:click="change_done(item.item_id, false)" v-if="item.done == true" class="btn btn-secondary" v-bind:value="item.item_id">戻す</button>
+                        <button v-on:click="delete_todoitem(item.item_id)" class="btn btn-danger" v-bind:value="item.item_id">削除</button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- JavaScript Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
-        crossorigin="anonymous"></script>
+    <footer class="fixed-bottom">
+        <div class="text-center bg-dark text-white py-2">
+            Copy Right Reserved for XXX
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/vue"></script>
     <script>
-        const request_url = "http://localhost:5000/api/todoitems";
+        const request_url = "http://localhost:8080/api/todoitems";
         new Vue({
             el: '#app',
             data: {
-                header: 'ToDo List',
-                items: [
-                    {
+                items: [{
                         id: 1,
                         title: 'hogehoge',
                         done: false
@@ -62,22 +111,22 @@
                 todotitle: '',
             },
             methods: {
-                showtodos: function () {
+                showtodos: function() {
                     fetch(request_url)
                         .then(response => response.json())
                         .then(jsondata => this.items = jsondata.objects);
                 },
-                register_todoitem: function () {
+                register_todoitem: function() {
                     fetch(request_url, {
-                        method: "POST",
-                        mode: "cors",
-                        body: JSON.stringify({
-                            title: this.todotitle
-                        }),
-                        headers: {
-                            "content-type": "application/json"
-                        }
-                    })
+                            method: "POST",
+                            mode: "cors",
+                            body: JSON.stringify({
+                                title: this.todotitle
+                            }),
+                            headers: {
+                                "content-type": "application/json"
+                            }
+                        })
                         .then(response => response.json())
                         .then(jsondata => {
                             console.log(jsondata);
@@ -86,30 +135,31 @@
                         })
                         .catch(err => console.log(`err: ${err}`));
                 },
-                delete_todoitem: function (id) {
+                delete_todoitem: function(id) {
                     fetch(request_url + '/' + id, {
-                        method: "DELETE",
-                    })
-                    .then(response => this.showtodos());
+                            method: "DELETE",
+                        })
+                        .then(response => this.showtodos());
                 },
-                change_done: function (id, status) {
+                change_done: function(id, status) {
                     fetch(request_url + '/' + id, {
-                        method: "PUT",
-                        mode: "cors",
-                        body: JSON.stringify({
-                            done: status,
-                        }),
-                        headers: {
-                            "content-type": "application/json"
-                        },
-                    })
-                    .then(response => this.showtodos());
+                            method: "PUT",
+                            mode: "cors",
+                            body: JSON.stringify({
+                                done: status,
+                            }),
+                            headers: {
+                                "content-type": "application/json"
+                            },
+                        })
+                        .then(response => this.showtodos());
                 },
             },
-            mounted: function () {
+            mounted: function() {
                 this.showtodos();
             },
         });
+
     </script>
 
 </body>
