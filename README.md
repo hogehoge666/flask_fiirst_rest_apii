@@ -67,7 +67,8 @@ Flaskで作成する簡単なAPIサーバの写経です。
   - docker bridgeがNATするのでクライアントIPは残念ながらwaitressには見えない
 
 ## 8. v0.8
-- Bootstrapを使ったCard
+- Bootstrapを使ったNavigation bar、Card、Grid Systemによる整列
+  - Navigation BarのメニューはMock。動かない。
 - 複数項目の一括操作廃止
 
 ---
